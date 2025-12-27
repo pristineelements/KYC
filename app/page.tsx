@@ -1,49 +1,1263 @@
+'use client';
+
+import { useState } from 'react';
+
+interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  bio: string;
+  enrolledCourses: number[];
+}
+
+interface TextBlock {
+  id: string;
+  text: string;
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: string;
+  textAlign: 'left' | 'center' | 'right';
+  color: string;
+}
+
+interface SlideContent {
+  textBlocks: TextBlock[];
+  images: { id: string; url: string; alt: string }[];
+}
+
+interface Slide {
+  id: number;
+  title: string;
+  content: string;
+  slideNumber: number;
+  richContent?: SlideContent;
+}
+
+interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+}
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  instructor: string;
+  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  category: string;
+  image: string;
+  slides: Slide[];
+  quiz: QuizQuestion[];
+}
+
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-center gap-8 py-32 px-16 bg-white dark:bg-black">
-        <svg
-          viewBox="0 0 69 26"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="fill-black dark:fill-white"
-        >
-          <path d="M13.7917 24.3604C12.4622 25.3549 10.7895 25.8884 8.82032 25.8884C6.66971 25.8884 4.87412 25.3543 3.47587 24.3604H13.7917Z"></path>
-          <path d="M27.8204 24.3604C26.802 25.2894 25.534 25.8884 24.1756 25.8884C22.4188 25.8884 21.02 25.339 20.108 24.3604H27.8204Z"></path>
-          <path d="M44.5726 24.3604C43.0194 25.3511 41.0762 25.8884 38.8367 25.8884C36.5972 25.8884 34.6541 25.3511 33.1008 24.3604H44.5726Z"></path>
-          <path d="M6.10452 21.7838C6.64469 22.5408 7.32257 23.0964 8.12748 23.4234H2.40008C1.94592 22.9414 1.55318 22.3936 1.22435 21.7838H6.10452Z"></path>
-          <path d="M15.9753 21.7838C15.6457 22.3936 15.2602 22.9415 14.8213 23.4234H11.8608C12.7015 23.0973 13.4264 22.543 14.0227 21.7838H15.9753Z"></path>
-          <path d="M23.2016 21.7838C23.3205 22.5267 23.6272 23.0906 24.0875 23.4234H19.4507C19.2008 22.9377 19.0348 22.3887 18.9611 21.7838H23.2016Z"></path>
-          <path d="M29.6415 21.7838C29.3929 22.3649 29.0672 22.9198 28.6798 23.4234H26.2913C26.809 23.0921 27.2884 22.5303 27.6965 21.7838H29.6415Z"></path>
-          <path d="M34.7756 21.7838C35.1876 22.498 35.7076 23.0447 36.3327 23.4234H31.8901C31.3725 22.9406 30.9182 22.3925 30.5327 21.7838H34.7756Z"></path>
-          <path d="M47.1403 21.7838C46.7548 22.3925 46.3005 22.9406 45.7829 23.4234H41.3477C41.9765 23.0447 42.5011 22.4979 42.9178 21.7838H47.1403Z"></path>
-          <path d="M4.97293 19.2072C5.1237 19.8073 5.31836 20.3552 5.55486 20.8468H0.788749C0.585257 20.3346 0.420002 19.7875 0.293988 19.2072H4.97293Z"></path>
-          <path d="M16.9458 19.2072C16.8042 19.7876 16.6278 20.3347 16.4179 20.8468H14.6376C14.9063 20.3562 15.1356 19.8083 15.3244 19.2072H16.9458Z"></path>
-          <path d="M23.146 20.8468H18.9172V19.2072H23.146V20.8468Z"></path>
-          <path d="M33.879 19.2072C33.9937 19.8097 34.1454 20.3562 34.3337 20.8468H30.0171C30.0067 20.8251 29.9961 20.8035 29.9859 20.7817C29.9802 20.8034 29.9741 20.8251 29.9682 20.8468H28.1326C28.3289 20.3505 28.4984 19.8012 28.6354 19.2072H33.879Z"></path>
-          <path d="M48.2582 19.2072C48.1017 19.7867 47.8998 20.3339 47.6561 20.8468H43.3651C43.5558 20.3562 43.71 19.8097 43.8264 19.2072H48.2582Z"></path>
-          <path d="M4.61127 16.6306C4.63883 17.207 4.69545 17.7543 4.78 18.2703H0.128844C0.056725 17.7466 0.0134713 17.1997 0 16.6306H4.61127Z"></path>
-          <path d="M17.2781 17.2464C17.2423 17.5969 17.1958 17.9383 17.1392 18.2703H15.5758C15.6704 17.8506 15.7479 17.4096 15.8073 16.9484L17.2781 17.2464Z"></path>
-          <path d="M23.146 18.2703H18.9172V16.6306H23.146V18.2703Z"></path>
-          <path d="M33.6225 16.6306C33.6374 17.2111 33.6755 17.7576 33.7361 18.2703H28.8183C28.902 17.7493 28.9618 17.2012 28.9946 16.6306H33.6225Z"></path>
-          <path d="M48.643 16.6306C48.6191 17.199 48.5595 17.7459 48.4664 18.2703H43.9719C44.0335 17.7576 44.072 17.211 44.0873 16.6306H48.643Z"></path>
-          <path d="M23.146 6.89115H28.9193V8.56739H23.146V15.6937H18.9172V8.56739H15.8592L16.4324 14.49L14.9983 14.6762C14.0055 9.75933 13.1963 8.00865 9.8132 7.85966C6.45181 7.85968 4.61542 10.5441 4.592 15.6937H0.00268892C0.175472 9.48821 3.32011 6.14613 8.93079 6.14613C9.77653 6.14614 10.7326 6.25781 11.8725 6.51853C13.152 6.78855 14.2702 6.89115 15.697 6.89115C19.7286 6.89112 21.3074 4.20914 22.0796 0H23.146V6.89115Z"></path>
-          <path d="M38.8367 6.14613C44.6383 6.14616 48.4971 9.86614 48.6497 15.6937H44.092C44.0101 10.6034 42.1785 7.97132 38.8367 7.97128C35.5308 7.97128 33.6998 10.6034 33.618 15.6937H29.0235C29.1761 9.86611 33.0351 6.14613 38.8367 6.14613Z"></path>
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M58.5142 19.14C59.5559 19.14 60.9024 19.5091 60.9532 22.5701H58.3236C57.7138 22.5701 57.3201 22.734 57.3709 23.3763C57.5233 25.2074 57.9934 25.385 58.6413 25.385C59.3145 25.385 59.937 25.18 60.2545 23.9229C60.28 23.8546 60.4706 23.8545 60.5468 23.8545C60.6103 23.8545 60.8389 23.8546 60.8135 23.9229C60.4197 25.6993 59.6702 26 58.6413 26C57.5996 26 55.9862 25.631 55.9862 22.5701C55.9862 19.4954 57.536 19.14 58.5142 19.14ZM58.5142 19.5773C57.9044 19.5773 57.4217 19.9736 57.3455 22.0917H59.5813C59.5051 19.9737 59.1367 19.5773 58.5142 19.5773Z"
-          ></path>
-          <path d="M63.258 19.2631C63.3215 19.2631 63.3342 19.4543 63.3342 19.509C63.3342 19.55 63.3216 19.7276 63.258 19.7276C62.6737 19.7276 62.7118 20.083 62.8262 20.5066C62.9913 21.1899 63.5121 22.9663 63.6137 23.4309C63.6391 23.5676 63.7662 23.5539 63.817 23.4309L65.0238 20.1786C65.0365 20.124 65.1763 20.124 65.2525 20.124C65.3287 20.124 65.4685 20.124 65.4939 20.1786L66.6625 23.4309C66.7006 23.5539 66.8404 23.5539 66.8658 23.4309L67.6661 20.5203C67.7931 20.083 67.8186 19.7276 67.2342 19.7276C67.1834 19.7276 67.1707 19.5773 67.1707 19.509C67.1707 19.427 67.1834 19.2631 67.2342 19.2631H68.9238C68.9746 19.2631 69 19.427 69 19.509C69 19.5773 68.9746 19.7276 68.9238 19.7276C68.3903 19.7276 68.2378 20.1239 68.1235 20.5339C67.9965 20.9438 66.5613 25.8484 66.5482 25.9043C66.5228 25.959 66.4339 25.959 66.3704 25.959C66.3069 25.959 66.2179 25.9317 66.2052 25.9043C66.1036 25.426 65.0619 22.6247 64.9222 22.1054C64.9095 21.9824 64.7443 21.9824 64.7062 22.1191C64.6554 22.2286 63.3347 25.8485 63.3216 25.9043C63.3089 25.959 63.2326 25.959 63.1564 25.959C63.0802 25.959 63.004 25.959 62.9786 25.9043L61.4033 20.5339C61.2763 20.0693 61.1111 19.7276 60.5649 19.7276C60.5268 19.7276 60.5014 19.591 60.5014 19.509C60.5014 19.4133 60.5268 19.2631 60.5649 19.2631H63.258Z"></path>
-          <path d="M53.2441 19.1264C54.0064 19.1264 55.2766 19.3724 55.2766 21.2718V24.5105C55.2766 24.9204 55.3275 25.3167 55.8991 25.3167C55.9499 25.3167 55.9627 25.4807 55.9627 25.549C55.9627 25.631 55.9499 25.795 55.8991 25.795H53.2823C53.2441 25.795 53.2187 25.6584 53.2187 25.5627C53.2187 25.4671 53.2314 25.3167 53.2823 25.3167C53.8666 25.3167 53.892 24.9204 53.892 24.5105V21.5178C53.892 19.9053 53.4347 19.8507 53.0536 19.8507C52.4184 19.8507 52.2024 20.3699 52.0119 20.7525V24.5105C52.0119 24.9341 52.0627 25.3167 52.6598 25.3167C52.7106 25.3167 52.7233 25.508 52.7233 25.549C52.7233 25.6037 52.6979 25.795 52.6598 25.795H49.8777C49.8269 25.795 49.8015 25.6583 49.8015 25.549C49.8015 25.4671 49.8269 25.3168 49.8777 25.3167C50.6526 25.3167 50.7034 24.9068 50.7034 24.5105V20.5476C50.7034 20.0693 50.5764 19.7413 49.8777 19.7413C49.8269 19.7413 49.8015 19.6047 49.8015 19.4954C49.8015 19.3861 49.8269 19.2631 49.8777 19.2631H51.6308C51.8213 19.2631 51.9611 19.3314 51.9992 19.673C52.0119 19.7687 52.0754 19.796 52.1389 19.7276C52.3422 19.4817 52.6598 19.1264 53.2441 19.1264Z"></path>
-          <path d="M48.0394 25.9621H46.8V24.629H48.0394V25.9621Z"></path>
-        </svg>
-        <div className="flex flex-col items-center text-center">
-          <h1 className="max-w-xs text-2xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Ready for your first task
-          </h1>
+  const [currentUser] = useState<UserProfile>({
+    id: 1,
+    name: 'Alex Morgan',
+    email: 'alex.morgan@example.com',
+    avatar: '👤',
+    bio: 'Passionate learner exploring web development and design',
+    enrolledCourses: [1, 2, 3],
+  });
+
+  const [courses, setCourses] = useState<Course[]>([
+    {
+      id: 1,
+      title: 'React & Next.js Masterclass',
+      description: 'Learn modern React development with Next.js, including App Router, Server Components, and advanced patterns.',
+      instructor: 'Sarah Johnson',
+      level: 'Advanced',
+      category: 'Web Development',
+      image: '🚀',
+      slides: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        slideNumber: i + 1,
+        title: `React Lesson ${i + 1}`,
+        content: `This is slide ${i + 1} covering important React and Next.js concepts. Learn about modern web development patterns and best practices.`,
+        richContent: {
+          textBlocks: [{
+            id: '1',
+            text: `This is slide ${i + 1} covering important React and Next.js concepts. Learn about modern web development patterns and best practices.`,
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fontWeight: 'normal',
+            textAlign: 'left',
+            color: '#000000',
+          }],
+          images: [],
+        },
+      })),
+      quiz: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        question: `React Question ${i + 1}: What is the best practice for this scenario?`,
+        options: ['Option A', 'Option B', 'Option C', 'Option D'],
+        correctAnswer: 0,
+      })),
+    },
+    {
+      id: 2,
+      title: 'TypeScript Fundamentals',
+      description: 'Master TypeScript from basics to advanced concepts. Build type-safe applications.',
+      instructor: 'Michael Chen',
+      level: 'Intermediate',
+      category: 'Programming',
+      image: '📘',
+      slides: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        slideNumber: i + 1,
+        title: `TypeScript Lesson ${i + 1}`,
+        content: `This is slide ${i + 1} covering TypeScript fundamentals. Learn about types, interfaces, and advanced TypeScript features.`,
+        richContent: {
+          textBlocks: [{
+            id: '1',
+            text: `This is slide ${i + 1} covering TypeScript fundamentals. Learn about types, interfaces, and advanced TypeScript features.`,
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fontWeight: 'normal',
+            textAlign: 'left',
+            color: '#000000',
+          }],
+          images: [],
+        },
+      })),
+      quiz: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        question: `TypeScript Question ${i + 1}: Which type annotation is correct?`,
+        options: ['Option A', 'Option B', 'Option C', 'Option D'],
+        correctAnswer: 1,
+      })),
+    },
+    {
+      id: 3,
+      title: 'UI/UX Design Essentials',
+      description: 'Create beautiful, user-friendly interfaces. Learn design principles and prototyping.',
+      instructor: 'Emma Davis',
+      level: 'Beginner',
+      category: 'Design',
+      image: '🎨',
+      slides: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        slideNumber: i + 1,
+        title: `Design Lesson ${i + 1}`,
+        content: `This is slide ${i + 1} covering UI/UX design principles. Learn about user experience, visual hierarchy, and design systems.`,
+        richContent: {
+          textBlocks: [{
+            id: '1',
+            text: `This is slide ${i + 1} covering UI/UX design principles. Learn about user experience, visual hierarchy, and design systems.`,
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fontWeight: 'normal',
+            textAlign: 'left',
+            color: '#000000',
+          }],
+          images: [],
+        },
+      })),
+      quiz: Array.from({ length: 10 }, (_, i) => ({
+        id: i + 1,
+        question: `Design Question ${i + 1}: What principle applies here?`,
+        options: ['Option A', 'Option B', 'Option C', 'Option D'],
+        correctAnswer: 2,
+      })),
+    },
+  ]);
+
+  const [view, setView] = useState<'profile' | 'courses' | 'course-detail'>('profile');
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [editingSlide, setEditingSlide] = useState<Slide | null>(null);
+  const [editingQuestion, setEditingQuestion] = useState<QuizQuestion | null>(null);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [quizAnswers, setQuizAnswers] = useState<{ [key: number]: number }>({});
+  const [showQuizResults, setShowQuizResults] = useState(false);
+
+  const [slideFormData, setSlideFormData] = useState<{
+    title: string;
+    content: string;
+    textBlocks: TextBlock[];
+    images: { id: string; url: string; alt: string }[];
+  }>({
+    title: '',
+    content: '',
+    textBlocks: [],
+    images: [],
+  });
+
+  const [questionFormData, setQuestionFormData] = useState({
+    question: '',
+    options: ['', '', '', ''],
+    correctAnswer: 0,
+  });
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const enrolledCourses = courses.filter(c => currentUser.enrolledCourses.includes(c.id));
+
+  const handleViewCourse = (course: Course) => {
+    setSelectedCourse(course);
+    setCurrentSlide(0);
+    setShowQuiz(false);
+    setShowQuizResults(false);
+    setQuizAnswers({});
+    setView('course-detail');
+  };
+
+  const handleNextSlide = () => {
+    if (selectedCourse && currentSlide < selectedCourse.slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    } else if (selectedCourse && currentSlide === selectedCourse.slides.length - 1) {
+      setShowQuiz(true);
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+      setShowQuiz(false);
+    }
+  };
+
+  const handleEditSlide = (slide: Slide) => {
+    setEditingSlide(slide);
+    setSlideFormData({
+      title: slide.title,
+      content: slide.content,
+      textBlocks: slide.richContent?.textBlocks || [{
+        id: '1',
+        text: slide.content,
+        fontFamily: 'Arial',
+        fontSize: 16,
+        fontWeight: 'normal',
+        textAlign: 'left',
+        color: '#000000',
+      }],
+      images: slide.richContent?.images || [],
+    });
+  };
+
+  const handleAddSlide = () => {
+    if (!selectedCourse) return;
+    const newSlide: Slide = {
+      id: selectedCourse.slides.length + 1,
+      slideNumber: selectedCourse.slides.length + 1,
+      title: '',
+      content: '',
+      richContent: {
+        textBlocks: [],
+        images: [],
+      },
+    };
+    setEditingSlide(newSlide);
+    setSlideFormData({
+      title: '',
+      content: '',
+      textBlocks: [],
+      images: [],
+    });
+  };
+
+  const handleAddTextBlock = () => {
+    const newTextBlock: TextBlock = {
+      id: Date.now().toString(),
+      text: '',
+      fontFamily: 'Arial',
+      fontSize: 16,
+      fontWeight: 'normal',
+      textAlign: 'left',
+      color: '#000000',
+    };
+    setSlideFormData({
+      ...slideFormData,
+      textBlocks: [...slideFormData.textBlocks, newTextBlock],
+    });
+  };
+
+  const handleUpdateTextBlock = (id: string, updates: Partial<TextBlock>) => {
+    setSlideFormData({
+      ...slideFormData,
+      textBlocks: slideFormData.textBlocks.map(block =>
+        block.id === id ? { ...block, ...updates } : block
+      ),
+    });
+  };
+
+  const handleDeleteTextBlock = (id: string) => {
+    setSlideFormData({
+      ...slideFormData,
+      textBlocks: slideFormData.textBlocks.filter(block => block.id !== id),
+    });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newImage = {
+          id: Date.now().toString(),
+          url: reader.result as string,
+          alt: file.name,
+        };
+        setSlideFormData({
+          ...slideFormData,
+          images: [...slideFormData.images, newImage],
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeleteImage = (id: string) => {
+    setSlideFormData({
+      ...slideFormData,
+      images: slideFormData.images.filter(img => img.id !== id),
+    });
+  };
+
+  const handleSaveSlide = () => {
+    if (!selectedCourse || !editingSlide) return;
+
+    const updatedCourses = courses.map(course => {
+      if (course.id === selectedCourse.id) {
+        const existingSlide = course.slides.find(s => s.id === editingSlide.id);
+        const updatedSlide = {
+          ...editingSlide,
+          title: slideFormData.title,
+          content: slideFormData.textBlocks.map(b => b.text).join('\n'),
+          richContent: {
+            textBlocks: slideFormData.textBlocks,
+            images: slideFormData.images,
+          },
+        };
+
+        if (existingSlide) {
+          return {
+            ...course,
+            slides: course.slides.map(s =>
+              s.id === editingSlide.id ? updatedSlide : s
+            ),
+          };
+        } else {
+          return {
+            ...course,
+            slides: [...course.slides, updatedSlide],
+          };
+        }
+      }
+      return course;
+    });
+
+    setCourses(updatedCourses);
+    setSelectedCourse(updatedCourses.find(c => c.id === selectedCourse.id) || null);
+    setEditingSlide(null);
+    showNotification('Slide saved successfully!', 'success');
+  };
+
+  const handleDeleteSlide = (slideId: number) => {
+    if (!selectedCourse || !confirm('Delete this slide?')) return;
+
+    const updatedCourses = courses.map(course => {
+      if (course.id === selectedCourse.id) {
+        return {
+          ...course,
+          slides: course.slides.filter(s => s.id !== slideId).map((s, i) => ({
+            ...s,
+            slideNumber: i + 1,
+          })),
+        };
+      }
+      return course;
+    });
+
+    setCourses(updatedCourses);
+    setSelectedCourse(updatedCourses.find(c => c.id === selectedCourse.id) || null);
+    if (currentSlide >= (selectedCourse.slides.length - 1)) {
+      setCurrentSlide(Math.max(0, currentSlide - 1));
+    }
+    showNotification('Slide deleted successfully!', 'success');
+  };
+
+  const handleEditQuestion = (question: QuizQuestion) => {
+    setEditingQuestion(question);
+    setQuestionFormData({
+      question: question.question,
+      options: [...question.options],
+      correctAnswer: question.correctAnswer,
+    });
+  };
+
+  const handleAddQuestion = () => {
+    if (!selectedCourse) return;
+    const newQuestion: QuizQuestion = {
+      id: selectedCourse.quiz.length + 1,
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: 0,
+    };
+    setEditingQuestion(newQuestion);
+    setQuestionFormData({
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: 0,
+    });
+  };
+
+  const handleSaveQuestion = () => {
+    if (!selectedCourse || !editingQuestion) return;
+
+    const updatedCourses = courses.map(course => {
+      if (course.id === selectedCourse.id) {
+        const existingQuestion = course.quiz.find(q => q.id === editingQuestion.id);
+        if (existingQuestion) {
+          return {
+            ...course,
+            quiz: course.quiz.map(q =>
+              q.id === editingQuestion.id ? { ...q, ...questionFormData } : q
+            ),
+          };
+        } else {
+          return {
+            ...course,
+            quiz: [...course.quiz, { ...editingQuestion, ...questionFormData }],
+          };
+        }
+      }
+      return course;
+    });
+
+    setCourses(updatedCourses);
+    setSelectedCourse(updatedCourses.find(c => c.id === selectedCourse.id) || null);
+    setEditingQuestion(null);
+    showNotification('Question saved successfully!', 'success');
+  };
+
+  const handleDeleteQuestion = (questionId: number) => {
+    if (!selectedCourse || !confirm('Delete this question?')) return;
+
+    const updatedCourses = courses.map(course => {
+      if (course.id === selectedCourse.id) {
+        return {
+          ...course,
+          quiz: course.quiz.filter(q => q.id !== questionId),
+        };
+      }
+      return course;
+    });
+
+    setCourses(updatedCourses);
+    setSelectedCourse(updatedCourses.find(c => c.id === selectedCourse.id) || null);
+    showNotification('Question deleted successfully!', 'success');
+  };
+
+  const handleSubmitQuiz = () => {
+    setShowQuizResults(true);
+  };
+
+  const calculateScore = () => {
+    if (!selectedCourse) return 0;
+    let correct = 0;
+    selectedCourse.quiz.forEach(q => {
+      if (quizAnswers[q.id] === q.correctAnswer) {
+        correct++;
+      }
+    });
+    return correct;
+  };
+
+  const renderSlideContent = (slide: Slide) => {
+    if (slide.richContent && (slide.richContent.textBlocks.length > 0 || slide.richContent.images.length > 0)) {
+      return (
+        <div className="space-y-4">
+          {slide.richContent.textBlocks.map((block) => (
+            <p
+              key={block.id}
+              style={{
+                fontFamily: block.fontFamily,
+                fontSize: `${block.fontSize}px`,
+                fontWeight: block.fontWeight,
+                textAlign: block.textAlign,
+                color: block.color,
+              }}
+              className="whitespace-pre-wrap"
+            >
+              {block.text}
+            </p>
+          ))}
+          {slide.richContent.images.map((image) => (
+            <img
+              key={image.id}
+              src={image.url}
+              alt={image.alt}
+              className="max-w-full h-auto rounded-lg"
+            />
+          ))}
         </div>
-      </main>
+      );
+    }
+    return <p className="text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{slide.content}</p>;
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-black flex">
+      {/* Notification */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white ${
+          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        }`}>
+          {notification.message}
+        </div>
+      )}
+
+      {/* Sidebar */}
+      <div className="w-80 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col">
+        {/* Profile Section */}
+        <div className="p-6 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-3xl">
+              {currentUser.avatar}
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-50">{currentUser.name}</h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">{currentUser.email}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setView('profile')}
+            className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+              view === 'profile'
+                ? 'bg-blue-600 text-white'
+                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+            }`}
+          >
+            View Full Profile
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-semibold text-zinc-900 dark:text-zinc-50">My Courses</h4>
+            <span className="text-sm text-zinc-600 dark:text-zinc-400">
+              {enrolledCourses.length}
+            </span>
+          </div>
+          <div className="space-y-2">
+            {enrolledCourses.map(course => (
+              <button
+                key={course.id}
+                onClick={() => handleViewCourse(course)}
+                className={`w-full p-4 rounded-lg text-left transition-all ${
+                  selectedCourse?.id === course.id
+                    ? 'bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500'
+                    : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                }`}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">{course.image}</span>
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-50">
+                      {course.title}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-zinc-600 dark:text-zinc-400">
+                  {course.slides.length} slides • {course.quiz.length} questions
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
+        {view === 'profile' && (
+          <div className="max-w-4xl mx-auto p-8">
+            <h1 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-8">
+              My Profile
+            </h1>
+            
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="h-32 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+              <div className="p-8">
+                <div className="flex items-start gap-6 -mt-16 mb-6">
+                  <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-6xl border-4 border-white dark:border-zinc-900">
+                    {currentUser.avatar}
+                  </div>
+                  <div className="flex-1 mt-16">
+                    <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
+                      {currentUser.name}
+                    </h2>
+                    <p className="text-zinc-600 dark:text-zinc-400 mb-4">{currentUser.email}</p>
+                    <p className="text-zinc-700 dark:text-zinc-300">{currentUser.bio}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                      {enrolledCourses.length}
+                    </div>
+                    <div className="text-sm text-zinc-600 dark:text-zinc-400">Enrolled Courses</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                      {enrolledCourses.reduce((sum, c) => sum + c.slides.length, 0)}
+                    </div>
+                    <div className="text-sm text-zinc-600 dark:text-zinc-400">Total Lessons</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                      {enrolledCourses.reduce((sum, c) => sum + c.quiz.length, 0)}
+                    </div>
+                    <div className="text-sm text-zinc-600 dark:text-zinc-400">Quiz Questions</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-8">
+              <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-6">
+                Enrolled Courses
+              </h3>
+              <div className="grid gap-4">
+                {enrolledCourses.map(course => (
+                  <div
+                    key={course.id}
+                    className="flex items-center gap-4 p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+                  >
+                    <div className="text-4xl">{course.image}</div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-zinc-900 dark:text-zinc-50">{course.title}</h4>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        by {course.instructor}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleViewCourse(course)}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Continue Learning
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {view === 'course-detail' && selectedCourse && (
+          <div className="max-w-6xl mx-auto p-8">
+            {/* Course Header */}
+            <div className="flex items-center gap-4 mb-8">
+              <button
+                onClick={() => setView('profile')}
+                className="p-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div>
+                <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                  {selectedCourse.title}
+                </h1>
+                <p className="text-zinc-600 dark:text-zinc-400">by {selectedCourse.instructor}</p>
+              </div>
+            </div>
+
+            {!showQuiz ? (
+              <>
+                {/* Slide Viewer */}
+                <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl overflow-hidden mb-6">
+                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-2xl font-bold">
+                        Slide {currentSlide + 1} of {selectedCourse.slides.length}
+                      </h2>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditSlide(selectedCourse.slides[currentSlide])}
+                          className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                          title="Edit Slide"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSlide(selectedCourse.slides[currentSlide].id)}
+                          className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                          title="Delete Slide"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div
+                        className="bg-white rounded-full h-2 transition-all duration-300"
+                        style={{ width: `${((currentSlide + 1) / selectedCourse.slides.length) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="p-12">
+                    <h3 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-6">
+                      {selectedCourse.slides[currentSlide].title}
+                    </h3>
+                    {renderSlideContent(selectedCourse.slides[currentSlide])}
+                  </div>
+
+                  <div className="p-6 bg-zinc-50 dark:bg-zinc-800 flex items-center justify-between">
+                    <button
+                      onClick={handlePrevSlide}
+                      disabled={currentSlide === 0}
+                      className="flex items-center gap-2 px-6 py-3 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-900 dark:text-zinc-50 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      Previous
+                    </button>
+
+                    <button
+                      onClick={handleAddSlide}
+                      className="flex items-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add Slide
+                    </button>
+
+                    <button
+                      onClick={handleNextSlide}
+                      className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      {currentSlide === selectedCourse.slides.length - 1 ? 'Take Quiz' : 'Next'}
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Slide Thumbnails */}
+                <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-6">
+                  <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+                    All Slides
+                  </h3>
+                  <div className="grid grid-cols-5 gap-4">
+                    {selectedCourse.slides.map((slide, index) => (
+                      <button
+                        key={slide.id}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          currentSlide === index
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                            : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                        }`}
+                      >
+                        <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-50 mb-1">
+                          Slide {slide.slideNumber}
+                        </div>
+                        <div className="text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                          {slide.title}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-2">
+                      Course Quiz
+                    </h2>
+                    <p className="text-zinc-600 dark:text-zinc-400">
+                      Test your knowledge with {selectedCourse.quiz.length} questions
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleAddQuestion}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Question
+                  </button>
+                </div>
+
+                {showQuizResults ? (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">
+                      {calculateScore() / selectedCourse.quiz.length >= 0.7 ? '🎉' : '📝'}
+                    </div>
+                    <h3 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+                      Quiz Complete!
+                    </h3>
+                    <div className="text-5xl font-bold text-blue-600 dark:text-blue-400 mb-4">
+                      {calculateScore()} / {selectedCourse.quiz.length}
+                    </div>
+                    <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-8">
+                      {calculateScore() / selectedCourse.quiz.length >= 0.7
+                        ? 'Great job! You passed!'
+                        : 'Keep practicing!'}
+                    </p>
+                    <div className="flex gap-4 justify-center">
+                      <button
+                        onClick={() => {
+                          setShowQuizResults(false);
+                          setQuizAnswers({});
+                        }}
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                      >
+                        Retake Quiz
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowQuiz(false);
+                          setCurrentSlide(0);
+                          setShowQuizResults(false);
+                          setQuizAnswers({});
+                        }}
+                        className="px-6 py-3 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded-lg font-semibold transition-colors"
+                      >
+                        Back to Slides
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-6 mb-8">
+                      {selectedCourse.quiz.map((question, qIndex) => (
+                        <div
+                          key={question.id}
+                          className="p-6 bg-zinc-50 dark:bg-zinc-800 rounded-lg"
+                        >
+                          <div className="flex items-start justify-between mb-4">
+                            <h4 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+                              {qIndex + 1}. {question.question}
+                            </h4>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleEditQuestion(question)}
+                                className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                                title="Edit"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => handleDeleteQuestion(question.id)}
+                                className="p-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                                title="Delete"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            {question.options.map((option, oIndex) => (
+                              <label
+                                key={oIndex}
+                                className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                                  quizAnswers[question.id] === oIndex
+                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                                    : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name={`question-${question.id}`}
+                                  checked={quizAnswers[question.id] === oIndex}
+                                  onChange={() => setQuizAnswers({ ...quizAnswers, [question.id]: oIndex })}
+                                  className="w-4 h-4"
+                                />
+                                <span className="text-zinc-900 dark:text-zinc-50">{option}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => setShowQuiz(false)}
+                        className="flex-1 px-6 py-3 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded-lg font-semibold transition-colors"
+                      >
+                        Back to Slides
+                      </button>
+                      <button
+                        onClick={handleSubmitQuiz}
+                        disabled={Object.keys(quizAnswers).length < selectedCourse.quiz.length}
+                        className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Submit Quiz
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Edit Slide Modal - Enhanced with Rich Text Editor */}
+      {editingSlide && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-4xl w-full my-8">
+            <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                {selectedCourse?.slides.find(s => s.id === editingSlide.id) ? 'Edit Slide' : 'Add New Slide'}
+              </h2>
+              <button
+                onClick={() => setEditingSlide(null)}
+                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+              {/* Slide Title */}
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  Slide Title *
+                </label>
+                <input
+                  type="text"
+                  value={slideFormData.title}
+                  onChange={(e) => setSlideFormData({ ...slideFormData, title: e.target.value })}
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter slide title"
+                />
+              </div>
+
+              {/* Text Blocks Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Text Blocks
+                  </label>
+                  <button
+                    onClick={handleAddTextBlock}
+                    className="flex items-center gap-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Text Block
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {slideFormData.textBlocks.map((block, index) => (
+                    <div key={block.id} className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                          Text Block {index + 1}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteTextBlock(block.id)}
+                          className="p-1 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <textarea
+                        value={block.text}
+                        onChange={(e) => handleUpdateTextBlock(block.id, { text: e.target.value })}
+                        className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-blue-500 text-sm"
+                        placeholder="Enter text content"
+                        rows={3}
+                      />
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Font Family
+                          </label>
+                          <select
+                            value={block.fontFamily}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { fontFamily: e.target.value })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Trebuchet MS">Trebuchet MS</option>
+                            <option value="Comic Sans MS">Comic Sans MS</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Font Size
+                          </label>
+                          <input
+                            type="number"
+                            value={block.fontSize}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { fontSize: parseInt(e.target.value) })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                            min="8"
+                            max="72"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Font Weight
+                          </label>
+                          <select
+                            value={block.fontWeight}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { fontWeight: e.target.value })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="normal">Normal</option>
+                            <option value="bold">Bold</option>
+                            <option value="lighter">Light</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Text Align
+                          </label>
+                          <select
+                            value={block.textAlign}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { textAlign: e.target.value as 'left' | 'center' | 'right' })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="left">Left</option>
+                            <option value="center">Center</option>
+                            <option value="right">Right</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                          Text Color
+                        </label>
+                        <input
+                          type="color"
+                          value={block.color}
+                          onChange={(e) => handleUpdateTextBlock(block.id, { color: e.target.value })}
+                          className="w-20 h-10 border border-zinc-300 dark:border-zinc-700 rounded-lg cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Images Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Images
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors cursor-pointer">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Upload Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {slideFormData.images.map((image) => (
+                    <div key={image.id} className="relative group">
+                      <img
+                        src={image.url}
+                        alt={image.alt}
+                        className="w-full h-40 object-cover rounded-lg border border-zinc-300 dark:border-zinc-700"
+                      />
+                      <button
+                        onClick={() => handleDeleteImage(image.id)}
+                        className="absolute top-2 right-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                  Preview
+                </label>
+                <div className="p-6 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg min-h-40">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+                    {slideFormData.title || 'Untitled Slide'}
+                  </h3>
+                  <div className="space-y-4">
+                    {slideFormData.textBlocks.map((block) => (
+                      <p
+                        key={block.id}
+                        style={{
+                          fontFamily: block.fontFamily,
+                          fontSize: `${block.fontSize}px`,
+                          fontWeight: block.fontWeight,
+                          textAlign: block.textAlign,
+                          color: block.color,
+                        }}
+                        className="whitespace-pre-wrap"
+                      >
+                        {block.text || 'Empty text block'}
+                      </p>
+                    ))}
+                    {slideFormData.images.map((image) => (
+                      <img
+                        key={image.id}
+                        src={image.url}
+                        alt={image.alt}
+                        className="max-w-full h-auto rounded-lg"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                <button
+                  onClick={handleSaveSlide}
+                  className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                >
+                  Save Slide
+                </button>
+                <button
+                  onClick={() => setEditingSlide(null)}
+                  className="flex-1 px-6 py-3 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded-lg font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Question Modal */}
+      {editingQuestion && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-2xl w-full">
+            <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+                {selectedCourse?.quiz.find(q => q.id === editingQuestion.id) ? 'Edit Question' : 'Add New Question'}
+              </h2>
+              <button
+                onClick={() => setEditingQuestion(null)}
+                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  Question *
+                </label>
+                <input
+                  type="text"
+                  value={questionFormData.question}
+                  onChange={(e) => setQuestionFormData({ ...questionFormData, question: e.target.value })}
+                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter question"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  Options
+                </label>
+                <div className="space-y-2">
+                  {questionFormData.options.map((option, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={option}
+                        onChange={(e) => {
+                          const newOptions = [...questionFormData.options];
+                          newOptions[index] = e.target.value;
+                          setQuestionFormData({ ...questionFormData, options: newOptions });
+                        }}
+                        className="flex-1 px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-blue-500"
+                        placeholder={`Option ${index + 1}`}
+                      />
+                      <button
+                        onClick={() => setQuestionFormData({ ...questionFormData, correctAnswer: index })}
+                        className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                          questionFormData.correctAnswer === index
+                            ? 'bg-green-600 text-white'
+                            : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50'
+                        }`}
+                      >
+                        {questionFormData.correctAnswer === index ? '✓ Correct' : 'Set Correct'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={handleSaveQuestion}
+                  className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                >
+                  Save Question
+                </button>
+                <button
+                  onClick={() => setEditingQuestion(null)}
+                  className="flex-1 px-6 py-3 bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded-lg font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
