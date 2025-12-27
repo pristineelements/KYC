@@ -11,11 +11,27 @@ interface UserProfile {
   enrolledCourses: number[];
 }
 
+interface TextBlock {
+  id: string;
+  text: string;
+  fontFamily: string;
+  fontSize: number;
+  fontWeight: string;
+  textAlign: 'left' | 'center' | 'right';
+  color: string;
+}
+
+interface SlideContent {
+  textBlocks: TextBlock[];
+  images: { id: string; url: string; alt: string }[];
+}
+
 interface Slide {
   id: number;
   title: string;
   content: string;
   slideNumber: number;
+  richContent?: SlideContent;
 }
 
 interface QuizQuestion {
@@ -61,6 +77,18 @@ export default function Home() {
         slideNumber: i + 1,
         title: `React Lesson ${i + 1}`,
         content: `This is slide ${i + 1} covering important React and Next.js concepts. Learn about modern web development patterns and best practices.`,
+        richContent: {
+          textBlocks: [{
+            id: '1',
+            text: `This is slide ${i + 1} covering important React and Next.js concepts. Learn about modern web development patterns and best practices.`,
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fontWeight: 'normal',
+            textAlign: 'left',
+            color: '#000000',
+          }],
+          images: [],
+        },
       })),
       quiz: Array.from({ length: 10 }, (_, i) => ({
         id: i + 1,
@@ -82,6 +110,18 @@ export default function Home() {
         slideNumber: i + 1,
         title: `TypeScript Lesson ${i + 1}`,
         content: `This is slide ${i + 1} covering TypeScript fundamentals. Learn about types, interfaces, and advanced TypeScript features.`,
+        richContent: {
+          textBlocks: [{
+            id: '1',
+            text: `This is slide ${i + 1} covering TypeScript fundamentals. Learn about types, interfaces, and advanced TypeScript features.`,
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fontWeight: 'normal',
+            textAlign: 'left',
+            color: '#000000',
+          }],
+          images: [],
+        },
       })),
       quiz: Array.from({ length: 10 }, (_, i) => ({
         id: i + 1,
@@ -103,6 +143,18 @@ export default function Home() {
         slideNumber: i + 1,
         title: `Design Lesson ${i + 1}`,
         content: `This is slide ${i + 1} covering UI/UX design principles. Learn about user experience, visual hierarchy, and design systems.`,
+        richContent: {
+          textBlocks: [{
+            id: '1',
+            text: `This is slide ${i + 1} covering UI/UX design principles. Learn about user experience, visual hierarchy, and design systems.`,
+            fontFamily: 'Arial',
+            fontSize: 16,
+            fontWeight: 'normal',
+            textAlign: 'left',
+            color: '#000000',
+          }],
+          images: [],
+        },
       })),
       quiz: Array.from({ length: 10 }, (_, i) => ({
         id: i + 1,
@@ -123,7 +175,18 @@ export default function Home() {
   const [quizAnswers, setQuizAnswers] = useState<{ [key: number]: number }>({});
   const [showQuizResults, setShowQuizResults] = useState(false);
 
-  const [slideFormData, setSlideFormData] = useState({ title: '', content: '' });
+  const [slideFormData, setSlideFormData] = useState<{
+    title: string;
+    content: string;
+    textBlocks: TextBlock[];
+    images: { id: string; url: string; alt: string }[];
+  }>({
+    title: '',
+    content: '',
+    textBlocks: [],
+    images: [],
+  });
+
   const [questionFormData, setQuestionFormData] = useState({
     question: '',
     options: ['', '', '', ''],
@@ -163,7 +226,20 @@ export default function Home() {
 
   const handleEditSlide = (slide: Slide) => {
     setEditingSlide(slide);
-    setSlideFormData({ title: slide.title, content: slide.content });
+    setSlideFormData({
+      title: slide.title,
+      content: slide.content,
+      textBlocks: slide.richContent?.textBlocks || [{
+        id: '1',
+        text: slide.content,
+        fontFamily: 'Arial',
+        fontSize: 16,
+        fontWeight: 'normal',
+        textAlign: 'left',
+        color: '#000000',
+      }],
+      images: slide.richContent?.images || [],
+    });
   };
 
   const handleAddSlide = () => {
@@ -173,9 +249,76 @@ export default function Home() {
       slideNumber: selectedCourse.slides.length + 1,
       title: '',
       content: '',
+      richContent: {
+        textBlocks: [],
+        images: [],
+      },
     };
     setEditingSlide(newSlide);
-    setSlideFormData({ title: '', content: '' });
+    setSlideFormData({
+      title: '',
+      content: '',
+      textBlocks: [],
+      images: [],
+    });
+  };
+
+  const handleAddTextBlock = () => {
+    const newTextBlock: TextBlock = {
+      id: Date.now().toString(),
+      text: '',
+      fontFamily: 'Arial',
+      fontSize: 16,
+      fontWeight: 'normal',
+      textAlign: 'left',
+      color: '#000000',
+    };
+    setSlideFormData({
+      ...slideFormData,
+      textBlocks: [...slideFormData.textBlocks, newTextBlock],
+    });
+  };
+
+  const handleUpdateTextBlock = (id: string, updates: Partial<TextBlock>) => {
+    setSlideFormData({
+      ...slideFormData,
+      textBlocks: slideFormData.textBlocks.map(block =>
+        block.id === id ? { ...block, ...updates } : block
+      ),
+    });
+  };
+
+  const handleDeleteTextBlock = (id: string) => {
+    setSlideFormData({
+      ...slideFormData,
+      textBlocks: slideFormData.textBlocks.filter(block => block.id !== id),
+    });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newImage = {
+          id: Date.now().toString(),
+          url: reader.result as string,
+          alt: file.name,
+        };
+        setSlideFormData({
+          ...slideFormData,
+          images: [...slideFormData.images, newImage],
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeleteImage = (id: string) => {
+    setSlideFormData({
+      ...slideFormData,
+      images: slideFormData.images.filter(img => img.id !== id),
+    });
   };
 
   const handleSaveSlide = () => {
@@ -184,19 +327,27 @@ export default function Home() {
     const updatedCourses = courses.map(course => {
       if (course.id === selectedCourse.id) {
         const existingSlide = course.slides.find(s => s.id === editingSlide.id);
+        const updatedSlide = {
+          ...editingSlide,
+          title: slideFormData.title,
+          content: slideFormData.textBlocks.map(b => b.text).join('\n'),
+          richContent: {
+            textBlocks: slideFormData.textBlocks,
+            images: slideFormData.images,
+          },
+        };
+
         if (existingSlide) {
           return {
             ...course,
             slides: course.slides.map(s =>
-              s.id === editingSlide.id
-                ? { ...s, title: slideFormData.title, content: slideFormData.content }
-                : s
+              s.id === editingSlide.id ? updatedSlide : s
             ),
           };
         } else {
           return {
             ...course,
-            slides: [...course.slides, { ...editingSlide, ...slideFormData }],
+            slides: [...course.slides, updatedSlide],
           };
         }
       }
@@ -318,6 +469,39 @@ export default function Home() {
       }
     });
     return correct;
+  };
+
+  const renderSlideContent = (slide: Slide) => {
+    if (slide.richContent && (slide.richContent.textBlocks.length > 0 || slide.richContent.images.length > 0)) {
+      return (
+        <div className="space-y-4">
+          {slide.richContent.textBlocks.map((block) => (
+            <p
+              key={block.id}
+              style={{
+                fontFamily: block.fontFamily,
+                fontSize: `${block.fontSize}px`,
+                fontWeight: block.fontWeight,
+                textAlign: block.textAlign,
+                color: block.color,
+              }}
+              className="whitespace-pre-wrap"
+            >
+              {block.text}
+            </p>
+          ))}
+          {slide.richContent.images.map((image) => (
+            <img
+              key={image.id}
+              src={image.url}
+              alt={image.alt}
+              className="max-w-full h-auto rounded-lg"
+            />
+          ))}
+        </div>
+      );
+    }
+    return <p className="text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">{slide.content}</p>;
   };
 
   return (
@@ -531,9 +715,7 @@ export default function Home() {
                     <h3 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-6">
                       {selectedCourse.slides[currentSlide].title}
                     </h3>
-                    <p className="text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">
-                      {selectedCourse.slides[currentSlide].content}
-                    </p>
+                    {renderSlideContent(selectedCourse.slides[currentSlide])}
                   </div>
 
                   <div className="p-6 bg-zinc-50 dark:bg-zinc-800 flex items-center justify-between">
@@ -739,10 +921,10 @@ export default function Home() {
         )}
       </div>
 
-      {/* Edit Slide Modal */}
+      {/* Edit Slide Modal - Enhanced with Rich Text Editor */}
       {editingSlide && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-2xl w-full">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-4xl w-full my-8">
             <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
                 {selectedCourse?.slides.find(s => s.id === editingSlide.id) ? 'Edit Slide' : 'Add New Slide'}
@@ -757,7 +939,8 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+              {/* Slide Title */}
               <div>
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
                   Slide Title *
@@ -771,19 +954,209 @@ export default function Home() {
                 />
               </div>
 
+              {/* Text Blocks Section */}
               <div>
-                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                  Slide Content *
-                </label>
-                <textarea
-                  value={slideFormData.content}
-                  onChange={(e) => setSlideFormData({ ...slideFormData, content: e.target.value })}
-                  className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-blue-500 h-40"
-                  placeholder="Enter slide content"
-                />
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Text Blocks
+                  </label>
+                  <button
+                    onClick={handleAddTextBlock}
+                    className="flex items-center gap-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Text Block
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {slideFormData.textBlocks.map((block, index) => (
+                    <div key={block.id} className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                          Text Block {index + 1}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteTextBlock(block.id)}
+                          className="p-1 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <textarea
+                        value={block.text}
+                        onChange={(e) => handleUpdateTextBlock(block.id, { text: e.target.value })}
+                        className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 focus:ring-2 focus:ring-blue-500 text-sm"
+                        placeholder="Enter text content"
+                        rows={3}
+                      />
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Font Family
+                          </label>
+                          <select
+                            value={block.fontFamily}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { fontFamily: e.target.value })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Trebuchet MS">Trebuchet MS</option>
+                            <option value="Comic Sans MS">Comic Sans MS</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Font Size
+                          </label>
+                          <input
+                            type="number"
+                            value={block.fontSize}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { fontSize: parseInt(e.target.value) })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                            min="8"
+                            max="72"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Font Weight
+                          </label>
+                          <select
+                            value={block.fontWeight}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { fontWeight: e.target.value })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="normal">Normal</option>
+                            <option value="bold">Bold</option>
+                            <option value="lighter">Light</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                            Text Align
+                          </label>
+                          <select
+                            value={block.textAlign}
+                            onChange={(e) => handleUpdateTextBlock(block.id, { textAlign: e.target.value as 'left' | 'center' | 'right' })}
+                            className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="left">Left</option>
+                            <option value="center">Center</option>
+                            <option value="right">Right</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                          Text Color
+                        </label>
+                        <input
+                          type="color"
+                          value={block.color}
+                          onChange={(e) => handleUpdateTextBlock(block.id, { color: e.target.value })}
+                          className="w-20 h-10 border border-zinc-300 dark:border-zinc-700 rounded-lg cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              {/* Images Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                    Images
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors cursor-pointer">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Upload Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  {slideFormData.images.map((image) => (
+                    <div key={image.id} className="relative group">
+                      <img
+                        src={image.url}
+                        alt={image.alt}
+                        className="w-full h-40 object-cover rounded-lg border border-zinc-300 dark:border-zinc-700"
+                      />
+                      <button
+                        onClick={() => handleDeleteImage(image.id)}
+                        className="absolute top-2 right-2 p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3">
+                  Preview
+                </label>
+                <div className="p-6 bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg min-h-40">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+                    {slideFormData.title || 'Untitled Slide'}
+                  </h3>
+                  <div className="space-y-4">
+                    {slideFormData.textBlocks.map((block) => (
+                      <p
+                        key={block.id}
+                        style={{
+                          fontFamily: block.fontFamily,
+                          fontSize: `${block.fontSize}px`,
+                          fontWeight: block.fontWeight,
+                          textAlign: block.textAlign,
+                          color: block.color,
+                        }}
+                        className="whitespace-pre-wrap"
+                      >
+                        {block.text || 'Empty text block'}
+                      </p>
+                    ))}
+                    {slideFormData.images.map((image) => (
+                      <img
+                        key={image.id}
+                        src={image.url}
+                        alt={image.alt}
+                        className="max-w-full h-auto rounded-lg"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
                 <button
                   onClick={handleSaveSlide}
                   className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
